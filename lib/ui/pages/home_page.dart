@@ -1,56 +1,40 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../../provider/home_provider.dart';
 import 'restaurant_list_page.dart';
 import 'favorite_page.dart';
 import 'settings_page.dart';
 
-class HomePage extends StatefulWidget {
+class HomePage extends StatelessWidget {
   static const routeName = '/home';
 
   const HomePage({super.key});
 
-  @override
-  State<HomePage> createState() => _HomePageState();
-}
-
-class _HomePageState extends State<HomePage> {
-  int _bottomNavIndex = 0;
-
-  final List<Widget> _listWidget = [
-    const RestaurantListPage(),
-    const FavoritePage(),
-    const SettingsPage(),
+  static const List<Widget> _pages = [
+    RestaurantListPage(),
+    FavoritePage(),
+    SettingsPage(),
   ];
 
-  final List<BottomNavigationBarItem> _bottomNavBarItems = [
-    const BottomNavigationBarItem(
-      icon: Icon(Icons.restaurant),
-      label: 'Restaurants',
-    ),
-    const BottomNavigationBarItem(
-      icon: Icon(Icons.favorite),
-      label: 'Favorites',
-    ),
-    const BottomNavigationBarItem(
-      icon: Icon(Icons.settings),
-      label: 'Settings',
-    ),
+  static const List<BottomNavigationBarItem> _bottomNavBarItems = [
+    BottomNavigationBarItem(icon: Icon(Icons.restaurant), label: 'Restaurants'),
+    BottomNavigationBarItem(icon: Icon(Icons.favorite), label: 'Favorites'),
+    BottomNavigationBarItem(icon: Icon(Icons.settings), label: 'Settings'),
   ];
-
-  void _onBottomNavTapped(int index) {
-    setState(() {
-      _bottomNavIndex = index;
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: IndexedStack(index: _bottomNavIndex, children: _listWidget),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _bottomNavIndex,
-        items: _bottomNavBarItems,
-        onTap: _onBottomNavTapped,
-      ),
+    return Consumer<HomeProvider>(
+      builder: (context, provider, child) {
+        return Scaffold(
+          body: IndexedStack(index: provider.selectedIndex, children: _pages),
+          bottomNavigationBar: BottomNavigationBar(
+            currentIndex: provider.selectedIndex,
+            items: _bottomNavBarItems,
+            onTap: provider.setIndex,
+          ),
+        );
+      },
     );
   }
 }

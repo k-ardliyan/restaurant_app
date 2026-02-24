@@ -10,30 +10,26 @@ class SettingsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Settings')),
-      body: Consumer<PreferencesProvider>(
-        builder: (context, provider, child) {
+      body: Consumer2<PreferencesProvider, SchedulingProvider>(
+        builder: (_, preferences, scheduled, _) {
           return ListView(
             children: [
               SwitchListTile(
                 title: const Text('Dark Theme'),
                 subtitle: const Text('Enable dark mode UI'),
-                value: provider.isDarkTheme,
-                onChanged: (value) {
-                  provider.enableDarkTheme(value);
-                },
+                value: preferences.isDarkTheme,
+                onChanged: preferences.enableDarkTheme,
               ),
               const Divider(),
-              Consumer<SchedulingProvider>(
-                builder: (context, scheduled, _) {
-                  return SwitchListTile(
-                    title: const Text('Restaurant Notification'),
-                    subtitle: const Text('Enable daily reminder at 11:00 AM'),
-                    value: provider.isDailyReminderActive,
-                    onChanged: (value) async {
-                      provider.enableDailyReminder(value);
-                      scheduled.scheduledNews(value);
-                    },
-                  );
+              SwitchListTile(
+                title: const Text('Restaurant Notification'),
+                subtitle: const Text('Enable daily reminder at 11:00 AM'),
+                value: preferences.isDailyReminderActive,
+                onChanged: (value) async {
+                  final success = await scheduled.scheduledNews(value);
+                  if (success) {
+                    preferences.enableDailyReminder(value);
+                  }
                 },
               ),
             ],

@@ -31,7 +31,8 @@ class RestaurantListProvider extends ChangeNotifier {
     } catch (e) {
       _state = const ResultError('Check your internet connection');
       _message = 'Failed to load data. Please check your internet connection.';
+    } finally {
+      notifyListeners();
     }
-    notifyListeners();
   }
 }

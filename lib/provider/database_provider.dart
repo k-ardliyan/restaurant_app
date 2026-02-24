@@ -49,9 +49,8 @@ class DatabaseProvider extends ChangeNotifier {
     }
   }
 
-  Future<bool> isFavorited(String id) async {
-    final favoritedRestaurant = await databaseHelper.getFavoriteById(id);
-    return favoritedRestaurant != null;
+  bool isFavorited(String id) {
+    return _favorites.any((r) => r.id == id);
   }
 
   void removeFavorite(String id) async {

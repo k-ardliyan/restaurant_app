@@ -94,32 +94,30 @@ void main() {
     );
 
     test(
-      'Unit Test 12: isFavorited returns true when restaurant exists in db',
+      'Unit Test 12: isFavorited returns true when restaurant exists in favorites',
       () async {
-        when(mockDatabaseHelper.getFavorites()).thenAnswer((_) async => []);
         when(
-          mockDatabaseHelper.getFavoriteById('test-id'),
-        ).thenAnswer((_) async => {'id': 'test-id'});
+          mockDatabaseHelper.getFavorites(),
+        ).thenAnswer((_) async => [testRestaurant]);
 
         final provider = DatabaseProvider(databaseHelper: mockDatabaseHelper);
+        await Future.delayed(const Duration(milliseconds: 50));
 
-        final result = await provider.isFavorited('test-id');
+        final result = provider.isFavorited('test-id');
 
         expect(result, true);
       },
     );
 
     test(
-      'Unit Test 13: isFavorited returns false when restaurant does not exist in db',
+      'Unit Test 13: isFavorited returns false when restaurant does not exist in favorites',
       () async {
         when(mockDatabaseHelper.getFavorites()).thenAnswer((_) async => []);
-        when(
-          mockDatabaseHelper.getFavoriteById('unknown-id'),
-        ).thenAnswer((_) async => null);
 
         final provider = DatabaseProvider(databaseHelper: mockDatabaseHelper);
+        await Future.delayed(const Duration(milliseconds: 50));
 
-        final result = await provider.isFavorited('unknown-id');
+        final result = provider.isFavorited('unknown-id');
 
         expect(result, false);
       },

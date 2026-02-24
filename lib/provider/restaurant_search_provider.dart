@@ -40,7 +40,8 @@ class RestaurantSearchProvider extends ChangeNotifier {
       _state = const ResultError('Check your internet connection');
       _message =
           'Failed to search data. Please check your internet connection.';
+    } finally {
+      notifyListeners();
     }
-    notifyListeners();
   }
 }

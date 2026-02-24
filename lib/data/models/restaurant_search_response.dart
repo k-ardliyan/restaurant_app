@@ -11,12 +11,13 @@ class RestaurantSearchResponse {
     required this.restaurants,
   });
 
-  factory RestaurantSearchResponse.fromJson(Map<String, dynamic> json) =>
-      RestaurantSearchResponse(
-        error: json['error'] ?? true,
-        founded: json['founded'] ?? 0,
-        restaurants: List<Restaurant>.from(
-          (json['restaurants'] as List).map((x) => Restaurant.fromJson(x)),
-        ),
-      );
+  factory RestaurantSearchResponse.fromJson(Map<String, dynamic> json) {
+    return RestaurantSearchResponse(
+      error: json['error'] ?? true,
+      founded: json['founded'] ?? 0,
+      restaurants: List<Restaurant>.from(
+        (json['restaurants'] as List).map((x) => Restaurant.fromJson(x)),
+      ),
+    );
+  }
 }

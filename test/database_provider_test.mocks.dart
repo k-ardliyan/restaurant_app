@@ -61,14 +61,6 @@ class MockDatabaseHelper extends _i1.Mock implements _i2.DatabaseHelper {
           as _i3.Future<List<_i5.Restaurant>>);
 
   @override
-  _i3.Future<Map<String, dynamic>?> getFavoriteById(String? id) =>
-      (super.noSuchMethod(
-            Invocation.method(#getFavoriteById, [id]),
-            returnValue: _i3.Future<Map<String, dynamic>?>.value(),
-          )
-          as _i3.Future<Map<String, dynamic>?>);
-
-  @override
   _i3.Future<void> removeFavorite(String? id) =>
       (super.noSuchMethod(
             Invocation.method(#removeFavorite, [id]),

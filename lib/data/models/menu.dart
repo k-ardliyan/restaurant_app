@@ -6,12 +6,14 @@ class Menu {
 
   Menu({required this.foods, required this.drinks});
 
-  factory Menu.fromJson(Map<String, dynamic> json) => Menu(
-    foods: List<Category>.from(
-      (json['foods'] as List).map((x) => Category.fromJson(x)),
-    ),
-    drinks: List<Category>.from(
-      (json['drinks'] as List).map((x) => Category.fromJson(x)),
-    ),
-  );
+  factory Menu.fromJson(Map<String, dynamic> json) {
+    return Menu(
+      foods: List<Category>.from(
+        (json['foods'] as List).map((x) => Category.fromJson(x)),
+      ),
+      drinks: List<Category>.from(
+        (json['drinks'] as List).map((x) => Category.fromJson(x)),
+      ),
+    );
+  }
 }

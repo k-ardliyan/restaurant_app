@@ -8,7 +8,9 @@ class ReviewBottomSheet extends StatefulWidget {
   const ReviewBottomSheet({super.key, required this.restaurantId});
 
   @override
-  State<ReviewBottomSheet> createState() => _ReviewBottomSheetState();
+  State<ReviewBottomSheet> createState() {
+    return _ReviewBottomSheetState();
+  }
 }
 
 class _ReviewBottomSheetState extends State<ReviewBottomSheet> {

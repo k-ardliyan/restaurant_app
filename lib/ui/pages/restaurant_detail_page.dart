@@ -18,7 +18,9 @@ class RestaurantDetailPage extends StatefulWidget {
   const RestaurantDetailPage({super.key, required this.id, this.heroTag});
 
   @override
-  State<RestaurantDetailPage> createState() => _RestaurantDetailPageState();
+  State<RestaurantDetailPage> createState() {
+    return _RestaurantDetailPageState();
+  }
 }
 
 class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
@@ -160,25 +162,20 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
 
             return Consumer<DatabaseProvider>(
               builder: (context, dbProvider, child) {
-                return FutureBuilder<bool>(
-                  future: dbProvider.isFavorited(restaurantDetail.id),
-                  builder: (context, snapshot) {
-                    var isFavorited = snapshot.data ?? false;
-                    return FloatingActionButton(
-                      backgroundColor: Colors.white,
-                      onPressed: () {
-                        if (isFavorited) {
-                          dbProvider.removeFavorite(restaurantDetail.id);
-                        } else {
-                          dbProvider.addFavorite(restaurantListModel);
-                        }
-                      },
-                      child: Icon(
-                        isFavorited ? Icons.favorite : Icons.favorite_border,
-                        color: Colors.red,
-                      ),
-                    );
+                final isFavorited = dbProvider.isFavorited(restaurantDetail.id);
+                return FloatingActionButton(
+                  backgroundColor: Colors.white,
+                  onPressed: () {
+                    if (isFavorited) {
+                      dbProvider.removeFavorite(restaurantDetail.id);
+                    } else {
+                      dbProvider.addFavorite(restaurantListModel);
+                    }
                   },
+                  child: Icon(
+                    isFavorited ? Icons.favorite : Icons.favorite_border,
+                    color: Colors.red,
+                  ),
                 );
               },
             );

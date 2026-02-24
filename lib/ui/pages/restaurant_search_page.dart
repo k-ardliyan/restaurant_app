@@ -14,7 +14,9 @@ class RestaurantSearchPage extends StatefulWidget {
   const RestaurantSearchPage({super.key});
 
   @override
-  State<RestaurantSearchPage> createState() => _RestaurantSearchPageState();
+  State<RestaurantSearchPage> createState() {
+    return _RestaurantSearchPageState();
+  }
 }
 
 class _RestaurantSearchPageState extends State<RestaurantSearchPage> {

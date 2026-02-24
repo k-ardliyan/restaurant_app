@@ -10,7 +10,9 @@ class DatabaseHelper {
     _instance = this;
   }
 
-  factory DatabaseHelper() => _instance ?? DatabaseHelper._internal();
+  factory DatabaseHelper() {
+    return _instance ?? DatabaseHelper._internal();
+  }
 
   static const String _tblFavorite = 'favorites';
 
@@ -50,21 +52,6 @@ class DatabaseHelper {
     List<Map<String, dynamic>> results = await db!.query(_tblFavorite);
 
     return results.map((res) => Restaurant.fromJson(res)).toList();
-  }
-
-  Future<Map<String, dynamic>?> getFavoriteById(String id) async {
-    final db = await database;
-    final results = await db!.query(
-      _tblFavorite,
-      where: 'id = ?',
-      whereArgs: [id],
-    );
-
-    if (results.isNotEmpty) {
-      return results.first;
-    } else {
-      return null;
-    }
   }
 
   Future<void> removeFavorite(String id) async {

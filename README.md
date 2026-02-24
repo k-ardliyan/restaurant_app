@@ -58,13 +58,13 @@ Mengimplementasikan manajemen state, persistensi data lokal, notifikasi terjadwa
 
 ## Testing
 
-| #    | File                               | Jenis       | Skenario                                                            |
-| ---- | ---------------------------------- | ----------- | ------------------------------------------------------------------- |
-| 1–3  | `test/provider_test.dart`          | Unit        | Initial state, API success, API error pada `RestaurantListProvider` |
-| 4–7  | `test/api_service_test.dart`       | Unit        | `getRestaurantList`, `getRestaurantDetail`, `searchRestaurants`     |
-| 8–13 | `test/database_provider_test.dart` | Unit        | CRUD SQLite via `DatabaseProvider` (mock `DatabaseHelper`)          |
-| 14   | `test/widget_test.dart`            | Widget      | `RestaurantCard` render nama, kota, rating                          |
-| 15   | `integration_test/app_test.dart`   | Integration | E2E: tap restoran → favorit → verifikasi di halaman favorit         |
+| #    | File                               | Jenis       | Skenario                                                                               |
+| ---- | ---------------------------------- | ----------- | -------------------------------------------------------------------------------------- |
+| 1–3  | `test/provider_test.dart`          | Unit        | Initial state, API success, API error pada `RestaurantListProvider`                    |
+| 4–7  | `test/api_service_test.dart`       | Unit        | `getRestaurantList` (success & HTTP error), `getRestaurantDetail`, `searchRestaurants` |
+| 8–13 | `test/database_provider_test.dart` | Unit        | CRUD SQLite via `DatabaseProvider` (mock `DatabaseHelper`)                             |
+| 14   | `test/widget_test.dart`            | Widget      | `RestaurantCard` render nama, kota, rating                                             |
+| 15   | `integration_test/app_test.dart`   | Integration | E2E: tap restoran → favorit → verifikasi di halaman favorit                            |
 
 ```bash
 # Jalankan unit + widget test
