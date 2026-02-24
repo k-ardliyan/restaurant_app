@@ -413,8 +413,9 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
                                   : null;
                             });
 
-                            if (nameError != null || reviewError != null)
+                            if (nameError != null || reviewError != null) {
                               return;
+                            }
 
                             setState(() => isSubmitting = true);
 
