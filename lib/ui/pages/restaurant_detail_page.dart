@@ -3,16 +3,19 @@ import 'package:provider/provider.dart';
 import '../../core/constants/api_constants.dart';
 import '../../core/state/result_state.dart';
 import '../../data/models/restaurant_detail.dart';
+import '../../data/models/restaurant.dart';
 import '../../data/models/category.dart';
 import '../../provider/restaurant_detail_provider.dart';
+import '../../provider/database_provider.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import '../widgets/review_bottom_sheet.dart';
 
 class RestaurantDetailPage extends StatefulWidget {
   static const routeName = '/restaurant_detail';
   final String id;
+  final String? heroTag;
 
-  const RestaurantDetailPage({super.key, required this.id});
+  const RestaurantDetailPage({super.key, required this.id, this.heroTag});
 
   @override
   State<RestaurantDetailPage> createState() => _RestaurantDetailPageState();
@@ -55,7 +58,7 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
                       ),
                     ),
                     background: Hero(
-                      tag: 'image_${restaurant.id}',
+                      tag: widget.heroTag ?? 'image_${restaurant.id}',
                       child: GestureDetector(
                         onTap: () {
                           Navigator.push(
@@ -73,7 +76,9 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
                                 body: Center(
                                   child: InteractiveViewer(
                                     child: Hero(
-                                      tag: 'image_${restaurant.id}',
+                                      tag:
+                                          widget.heroTag ??
+                                          'image_${restaurant.id}',
                                       child: CachedNetworkImage(
                                         imageUrl: ApiConstants.largeImage(
                                           restaurant.pictureId,
@@ -137,6 +142,48 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
           } else {
             return const SizedBox();
           }
+        },
+      ),
+      floatingActionButton: Consumer<RestaurantDetailProvider>(
+        builder: (context, provider, _) {
+          if (provider.state is ResultSuccess<RestaurantDetail>) {
+            final restaurantDetail =
+                (provider.state as ResultSuccess<RestaurantDetail>).data;
+            final restaurantListModel = Restaurant(
+              id: restaurantDetail.id,
+              name: restaurantDetail.name,
+              description: restaurantDetail.description,
+              pictureId: restaurantDetail.pictureId,
+              city: restaurantDetail.city,
+              rating: restaurantDetail.rating,
+            );
+
+            return Consumer<DatabaseProvider>(
+              builder: (context, dbProvider, child) {
+                return FutureBuilder<bool>(
+                  future: dbProvider.isFavorited(restaurantDetail.id),
+                  builder: (context, snapshot) {
+                    var isFavorited = snapshot.data ?? false;
+                    return FloatingActionButton(
+                      backgroundColor: Colors.white,
+                      onPressed: () {
+                        if (isFavorited) {
+                          dbProvider.removeFavorite(restaurantDetail.id);
+                        } else {
+                          dbProvider.addFavorite(restaurantListModel);
+                        }
+                      },
+                      child: Icon(
+                        isFavorited ? Icons.favorite : Icons.favorite_border,
+                        color: Colors.red,
+                      ),
+                    );
+                  },
+                );
+              },
+            );
+          }
+          return const SizedBox();
         },
       ),
     );

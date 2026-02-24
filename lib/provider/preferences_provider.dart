@@ -1,26 +1,37 @@
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import '../data/preferences/preferences_helper.dart';
 
 class PreferencesProvider extends ChangeNotifier {
-  static const String darkThemeKey = 'DARK_THEME';
-  bool _isDarkTheme = false;
+  PreferencesHelper preferencesHelper;
 
+  PreferencesProvider({required this.preferencesHelper}) {
+    _getTheme();
+    _getDailyReminder();
+  }
+
+  bool _isDarkTheme = false;
   bool get isDarkTheme => _isDarkTheme;
 
-  PreferencesProvider() {
+  bool _isDailyReminderActive = false;
+  bool get isDailyReminderActive => _isDailyReminderActive;
+
+  void _getTheme() async {
+    _isDarkTheme = await preferencesHelper.isDarkTheme;
+    notifyListeners();
+  }
+
+  void _getDailyReminder() async {
+    _isDailyReminderActive = await preferencesHelper.isDailyReminderActive;
+    notifyListeners();
+  }
+
+  void enableDarkTheme(bool value) {
+    preferencesHelper.setDarkTheme(value);
     _getTheme();
   }
 
-  void _getTheme() async {
-    final prefs = await SharedPreferences.getInstance();
-    _isDarkTheme = prefs.getBool(darkThemeKey) ?? false;
-    notifyListeners();
-  }
-
-  void enableDarkTheme(bool value) async {
-    final prefs = await SharedPreferences.getInstance();
-    prefs.setBool(darkThemeKey, value);
-    _isDarkTheme = value;
-    notifyListeners();
+  void enableDailyReminder(bool value) {
+    preferencesHelper.setDailyReminder(value);
+    _getDailyReminder();
   }
 }

@@ -75,7 +75,7 @@ class RestaurantDetailProvider extends ChangeNotifier {
             categories: currentData.categories,
             menus: currentData.menus,
             rating: currentData.rating,
-            customerReviews: result.customerReviews, // Using updated reviews
+            customerReviews: result.customerReviews,
           );
           _state = ResultSuccess(updatedRestaurant);
         }

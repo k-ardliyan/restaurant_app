@@ -1,11 +1,12 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../core/state/result_state.dart';
+import '../../provider/database_provider.dart';
 import '../../provider/restaurant_search_provider.dart';
 import '../../data/models/restaurant.dart';
 import '../widgets/restaurant_card.dart';
 import 'restaurant_detail_page.dart';
-import 'dart:async';
 
 class RestaurantSearchPage extends StatefulWidget {
   static const routeName = '/restaurant_search';
@@ -58,8 +59,8 @@ class _RestaurantSearchPageState extends State<RestaurantSearchPage> {
           onChanged: _onSearchChanged,
         ),
       ),
-      body: Consumer<RestaurantSearchProvider>(
-        builder: (context, provider, child) {
+      body: Consumer2<RestaurantSearchProvider, DatabaseProvider>(
+        builder: (context, provider, dbProvider, child) {
           final state = provider.state;
           if (state is ResultInitial) {
             return const Center(child: Text('Type to start searching...'));
@@ -71,13 +72,21 @@ class _RestaurantSearchPageState extends State<RestaurantSearchPage> {
               itemCount: restaurants.length,
               itemBuilder: (context, index) {
                 final restaurant = restaurants[index];
+                final isFav = dbProvider.favorites.any(
+                  (fav) => fav.id == restaurant.id,
+                );
                 return RestaurantCard(
                   restaurant: restaurant,
+                  heroTagPrefix: 'image_search',
+                  isFavorited: isFav,
                   onTap: () {
                     Navigator.pushNamed(
                       context,
                       RestaurantDetailPage.routeName,
-                      arguments: restaurant.id,
+                      arguments: {
+                        'id': restaurant.id,
+                        'heroTag': 'image_search_${restaurant.id}',
+                      },
                     );
                   },
                 );

@@ -1,21 +1,44 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:workmanager/workmanager.dart';
 import 'core/theme/app_theme.dart';
 import 'data/api/api_service.dart';
+import 'data/db/database_helper.dart';
+import 'data/preferences/preferences_helper.dart';
 import 'provider/restaurant_list_provider.dart';
 import 'provider/restaurant_search_provider.dart';
 import 'provider/restaurant_detail_provider.dart';
 import 'provider/preferences_provider.dart';
+import 'provider/database_provider.dart';
+import 'provider/scheduling_provider.dart';
 import 'ui/pages/restaurant_detail_page.dart';
 import 'ui/pages/restaurant_list_page.dart';
 import 'ui/pages/restaurant_search_page.dart';
+import 'ui/pages/home_page.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'utils/background_service.dart';
+import 'utils/notification_helper.dart';
 
-void main() {
-  runApp(const MyApp());
+final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+    FlutterLocalNotificationsPlugin();
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  final NotificationHelper notificationHelper = NotificationHelper();
+  await Workmanager().initialize(callbackDispatcher);
+  await notificationHelper.initNotifications(flutterLocalNotificationsPlugin);
+
+  final prefs = await SharedPreferences.getInstance();
+
+  runApp(MyApp(sharedPreferences: prefs));
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  final SharedPreferences sharedPreferences;
+
+  const MyApp({super.key, required this.sharedPreferences});
 
   @override
   Widget build(BuildContext context) {
@@ -43,7 +66,17 @@ class MyApp extends StatelessWidget {
           update: (context, apiService, previous) =>
               previous ?? RestaurantDetailProvider(apiService: apiService),
         ),
-        ChangeNotifierProvider(create: (_) => PreferencesProvider()),
+        ChangeNotifierProvider(
+          create: (_) => PreferencesProvider(
+            preferencesHelper: PreferencesHelper(
+              sharedPreferences: Future.value(sharedPreferences),
+            ),
+          ),
+        ),
+        ChangeNotifierProvider(
+          create: (_) => DatabaseProvider(databaseHelper: DatabaseHelper()),
+        ),
+        ChangeNotifierProvider(create: (_) => SchedulingProvider()),
       ],
       child: Consumer<PreferencesProvider>(
         builder: (context, preferences, child) {
@@ -55,13 +88,21 @@ class MyApp extends StatelessWidget {
             themeMode: preferences.isDarkTheme
                 ? ThemeMode.dark
                 : ThemeMode.light,
-            initialRoute: RestaurantListPage.routeName,
+            initialRoute: HomePage.routeName,
             routes: {
+              HomePage.routeName: (context) => const HomePage(),
               RestaurantListPage.routeName: (context) =>
                   const RestaurantListPage(),
-              RestaurantDetailPage.routeName: (context) => RestaurantDetailPage(
-                id: ModalRoute.of(context)?.settings.arguments as String,
-              ),
+              RestaurantDetailPage.routeName: (context) {
+                final args = ModalRoute.of(context)?.settings.arguments;
+                if (args is Map) {
+                  return RestaurantDetailPage(
+                    id: args['id'] as String,
+                    heroTag: args['heroTag'] as String?,
+                  );
+                }
+                return RestaurantDetailPage(id: args as String);
+              },
               RestaurantSearchPage.routeName: (context) =>
                   const RestaurantSearchPage(),
             },

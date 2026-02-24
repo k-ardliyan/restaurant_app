@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../core/state/result_state.dart';
+import '../../provider/database_provider.dart';
 import '../../provider/restaurant_list_provider.dart';
 import '../../provider/preferences_provider.dart';
 import '../../data/models/restaurant.dart';
@@ -39,8 +40,8 @@ class RestaurantListPage extends StatelessWidget {
           ),
         ],
       ),
-      body: Consumer<RestaurantListProvider>(
-        builder: (context, provider, child) {
+      body: Consumer2<RestaurantListProvider, DatabaseProvider>(
+        builder: (context, provider, dbProvider, child) {
           final state = provider.state;
           if (state is ResultLoading) {
             return const Center(child: CircularProgressIndicator());
@@ -50,13 +51,21 @@ class RestaurantListPage extends StatelessWidget {
               itemCount: restaurants.length,
               itemBuilder: (context, index) {
                 final restaurant = restaurants[index];
+                final isFav = dbProvider.favorites.any(
+                  (fav) => fav.id == restaurant.id,
+                );
                 return RestaurantCard(
                   restaurant: restaurant,
+                  heroTagPrefix: 'image_list',
+                  isFavorited: isFav,
                   onTap: () {
                     Navigator.pushNamed(
                       context,
                       RestaurantDetailPage.routeName,
-                      arguments: restaurant.id,
+                      arguments: {
+                        'id': restaurant.id,
+                        'heroTag': 'image_list_${restaurant.id}',
+                      },
                     );
                   },
                 );

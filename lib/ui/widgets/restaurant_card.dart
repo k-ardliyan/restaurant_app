@@ -6,11 +6,15 @@ import 'package:cached_network_image/cached_network_image.dart';
 class RestaurantCard extends StatelessWidget {
   final Restaurant restaurant;
   final VoidCallback onTap;
+  final String heroTagPrefix;
+  final bool? isFavorited;
 
   const RestaurantCard({
     super.key,
     required this.restaurant,
     required this.onTap,
+    this.heroTagPrefix = 'image',
+    this.isFavorited,
   });
 
   @override
@@ -35,7 +39,7 @@ class RestaurantCard extends StatelessWidget {
                 bottomLeft: Radius.circular(16),
               ),
               child: Hero(
-                tag: 'image_${restaurant.id}',
+                tag: '${heroTagPrefix}_${restaurant.id}',
                 child: CachedNetworkImage(
                   imageUrl: ApiConstants.smallImage(restaurant.pictureId),
                   width: 120,
@@ -93,6 +97,16 @@ class RestaurantCard extends StatelessWidget {
                                 color: Colors.amber.shade700,
                               ),
                         ),
+                        if (isFavorited != null) ...[
+                          const Spacer(),
+                          Icon(
+                            isFavorited!
+                                ? Icons.favorite
+                                : Icons.favorite_border,
+                            size: 18,
+                            color: isFavorited! ? Colors.red : Colors.grey,
+                          ),
+                        ],
                       ],
                     ),
                   ],
