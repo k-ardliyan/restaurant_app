@@ -24,12 +24,12 @@ class RestaurantDetailProvider extends ChangeNotifier {
   String? _reviewError;
   String? get reviewError => _reviewError;
 
-  void setNameError(String? error) {
+  set nameError(String? error) {
     _nameError = error;
     notifyListeners();
   }
 
-  void setReviewError(String? error) {
+  set reviewError(String? error) {
     _reviewError = error;
     notifyListeners();
   }
@@ -51,8 +51,9 @@ class RestaurantDetailProvider extends ChangeNotifier {
     } catch (e) {
       _state = const ResultError('Check your internet connection');
       _message = 'Failed to load restaurant details. Please try again.';
+    } finally {
+      notifyListeners();
     }
-    notifyListeners();
   }
 
   Future<bool> postReview(String id, String name, String review) async {
@@ -77,19 +78,15 @@ class RestaurantDetailProvider extends ChangeNotifier {
             customerReviews: result.customerReviews, // Using updated reviews
           );
           _state = ResultSuccess(updatedRestaurant);
-          notifyListeners();
         }
-        _isSubmittingReview = false;
-        notifyListeners();
         return true;
       }
-      _isSubmittingReview = false;
-      notifyListeners();
       return false;
     } catch (e) {
+      return false;
+    } finally {
       _isSubmittingReview = false;
       notifyListeners();
-      return false;
     }
   }
 }

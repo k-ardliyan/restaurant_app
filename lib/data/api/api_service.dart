@@ -2,7 +2,9 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import '../../core/constants/api_constants.dart';
 import '../models/restaurant_response.dart';
-import '../models/restaurant_detail.dart';
+import '../models/restaurant_search_response.dart';
+import '../models/restaurant_detail_response.dart';
+import '../models/review_response.dart';
 
 class ApiService {
   final http.Client client;

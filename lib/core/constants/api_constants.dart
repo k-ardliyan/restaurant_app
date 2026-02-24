@@ -6,8 +6,6 @@ class ApiConstants {
   static const String reviewEndpoint = '/review';
   static String largeImage(String pictureId) =>
       '$baseUrl/images/large/$pictureId';
-  static String mediumImage(String pictureId) =>
-      '$baseUrl/images/medium/$pictureId';
   static String smallImage(String pictureId) =>
       '$baseUrl/images/small/$pictureId';
 }

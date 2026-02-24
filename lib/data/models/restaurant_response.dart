@@ -13,34 +13,14 @@ class RestaurantListResponse {
     required this.restaurants,
   });
 
-  factory RestaurantListResponse.fromJson(Map<String, dynamic> json) =>
-      RestaurantListResponse(
-        error: json['error'] ?? true,
-        message: json['message'] ?? '',
-        count: json['count'] ?? 0,
-        restaurants: List<Restaurant>.from(
-          (json['restaurants'] as List).map((x) => Restaurant.fromJson(x)),
-        ),
-      );
-}
-
-class RestaurantSearchResponse {
-  final bool error;
-  final int founded;
-  final List<Restaurant> restaurants;
-
-  RestaurantSearchResponse({
-    required this.error,
-    required this.founded,
-    required this.restaurants,
-  });
-
-  factory RestaurantSearchResponse.fromJson(Map<String, dynamic> json) =>
-      RestaurantSearchResponse(
-        error: json['error'] ?? true,
-        founded: json['founded'] ?? 0,
-        restaurants: List<Restaurant>.from(
-          (json['restaurants'] as List).map((x) => Restaurant.fromJson(x)),
-        ),
-      );
+  factory RestaurantListResponse.fromJson(Map<String, dynamic> json) {
+    return RestaurantListResponse(
+      error: json['error'] ?? true,
+      message: json['message'] ?? '',
+      count: json['count'] ?? 0,
+      restaurants: List<Restaurant>.from(
+        (json['restaurants'] as List).map((x) => Restaurant.fromJson(x)),
+      ),
+    );
+  }
 }
