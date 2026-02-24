@@ -48,6 +48,7 @@ class MyApp extends StatelessWidget {
       child: Consumer<PreferencesProvider>(
         builder: (context, preferences, child) {
           return MaterialApp(
+            debugShowCheckedModeBanner: false,
             title: 'Restaurant App',
             theme: AppTheme.lightTheme,
             darkTheme: AppTheme.darkTheme,

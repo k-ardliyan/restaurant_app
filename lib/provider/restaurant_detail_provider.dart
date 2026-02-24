@@ -14,6 +14,33 @@ class RestaurantDetailProvider extends ChangeNotifier {
   String _message = '';
   String get message => _message;
 
+  // Review form state
+  bool _isSubmittingReview = false;
+  bool get isSubmittingReview => _isSubmittingReview;
+
+  String? _nameError;
+  String? get nameError => _nameError;
+
+  String? _reviewError;
+  String? get reviewError => _reviewError;
+
+  void setNameError(String? error) {
+    _nameError = error;
+    notifyListeners();
+  }
+
+  void setReviewError(String? error) {
+    _reviewError = error;
+    notifyListeners();
+  }
+
+  void resetFormState() {
+    _isSubmittingReview = false;
+    _nameError = null;
+    _reviewError = null;
+    notifyListeners();
+  }
+
   Future<void> fetchRestaurantDetail(String id) async {
     _state = const ResultLoading();
     notifyListeners();
@@ -29,6 +56,8 @@ class RestaurantDetailProvider extends ChangeNotifier {
   }
 
   Future<bool> postReview(String id, String name, String review) async {
+    _isSubmittingReview = true;
+    notifyListeners();
     try {
       final result = await apiService.postReview(id, name, review);
       if (!result.error) {
@@ -50,10 +79,16 @@ class RestaurantDetailProvider extends ChangeNotifier {
           _state = ResultSuccess(updatedRestaurant);
           notifyListeners();
         }
+        _isSubmittingReview = false;
+        notifyListeners();
         return true;
       }
+      _isSubmittingReview = false;
+      notifyListeners();
       return false;
     } catch (e) {
+      _isSubmittingReview = false;
+      notifyListeners();
       return false;
     }
   }

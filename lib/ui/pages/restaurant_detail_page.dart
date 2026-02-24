@@ -329,9 +329,12 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
   void _showReviewBottomSheet(BuildContext context, String restaurantId) {
     final nameController = TextEditingController();
     final reviewController = TextEditingController();
-    bool isSubmitting = false;
-    String? nameError;
-    String? reviewError;
+
+    final provider = Provider.of<RestaurantDetailProvider>(
+      context,
+      listen: false,
+    );
+    provider.resetFormState();
 
     showModalBottomSheet(
       context: context,
@@ -340,8 +343,8 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
       builder: (bottomSheetContext) {
-        return StatefulBuilder(
-          builder: (context, setState) {
+        return Consumer<RestaurantDetailProvider>(
+          builder: (context, provider, child) {
             return Padding(
               padding: EdgeInsets.only(
                 bottom: MediaQuery.of(context).viewInsets.bottom,
@@ -367,10 +370,12 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
                     decoration: InputDecoration(
                       labelText: 'Name',
                       hintText: 'Enter your name...',
-                      errorText: nameError,
+                      errorText: provider.nameError,
                     ),
                     onChanged: (_) {
-                      if (nameError != null) setState(() => nameError = null);
+                      if (provider.nameError != null) {
+                        provider.setNameError(null);
+                      }
                     },
                   ),
                   const SizedBox(height: 16),
@@ -379,12 +384,12 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
                     decoration: InputDecoration(
                       labelText: 'Review',
                       hintText: 'Share your experience...',
-                      errorText: reviewError,
+                      errorText: provider.reviewError,
                     ),
                     maxLines: 4,
                     onChanged: (_) {
-                      if (reviewError != null) {
-                        setState(() => reviewError = null);
+                      if (provider.reviewError != null) {
+                        provider.setReviewError(null);
                       }
                     },
                   ),
@@ -398,44 +403,36 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
                         borderRadius: BorderRadius.circular(16),
                       ),
                     ),
-                    onPressed: isSubmitting
+                    onPressed: provider.isSubmittingReview
                         ? null
                         : () async {
                             final nameText = nameController.text.trim();
                             final reviewText = reviewController.text.trim();
 
-                            setState(() {
-                              nameError = nameText.isEmpty
-                                  ? 'Name cannot be empty'
-                                  : null;
-                              reviewError = reviewText.isEmpty
+                            provider.setNameError(
+                              nameText.isEmpty ? 'Name cannot be empty' : null,
+                            );
+                            provider.setReviewError(
+                              reviewText.isEmpty
                                   ? 'Review cannot be empty'
-                                  : null;
-                            });
+                                  : null,
+                            );
 
-                            if (nameError != null || reviewError != null) {
+                            if (provider.nameError != null ||
+                                provider.reviewError != null) {
                               return;
                             }
-
-                            setState(() => isSubmitting = true);
 
                             final nav = Navigator.of(bottomSheetContext);
                             final scaffoldMessenger = ScaffoldMessenger.of(
                               this.context,
                             );
-                            final provider =
-                                Provider.of<RestaurantDetailProvider>(
-                                  this.context,
-                                  listen: false,
-                                );
 
                             final success = await provider.postReview(
                               restaurantId,
                               nameText,
                               reviewText,
                             );
-
-                            setState(() => isSubmitting = false);
 
                             if (success) {
                               nav.pop();
@@ -452,7 +449,7 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
                               );
                             }
                           },
-                    child: isSubmitting
+                    child: provider.isSubmittingReview
                         ? const SizedBox(
                             width: 24,
                             height: 24,
